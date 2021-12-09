@@ -43,6 +43,42 @@ class ClientHandler implements Runnable {
 
     @Override
     public void run() {
+        try {
+            while (true) {
+                String request = in.readLine();
+
+                if (request.contains("add")) {
+                    System.out.println("ADD");
+                    add();
+                } else if (request.contains("sell")) {
+                    System.out.println("SELL");
+                    sell();
+                } else if (request.contains("info")) {
+                    System.out.println("INFO");
+                    carInfo();
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            out.close();
+            try {
+                in.close();
+            } catch (IOException e){
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public void add() {
+
+    }
+
+    public void sell() {
+
+    }
+
+    public void carInfo() {
 
     }
 }
