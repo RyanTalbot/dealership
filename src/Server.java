@@ -5,6 +5,7 @@ import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -34,6 +35,7 @@ class ClientHandler implements Runnable {
         private Socket client;
         private BufferedReader in;
         private PrintWriter out;
+        Inventory inventory = new Inventory();
 
     public ClientHandler(Socket clientSocket) throws IOException {
         this.client = clientSocket;
@@ -134,5 +136,25 @@ class Car {
 
     public void setForSale(boolean forSale) {
         this.forSale = forSale;
+    }
+}
+
+class Inventory {
+    HashMap<String, Car> inventory;
+
+    public Inventory() {
+        this.inventory = new HashMap<>();
+
+        Car nissan = new Car("12D-32454", "Nissan", 15000, 500, true);
+        Car honda = new Car("06D-12547", "Honda", 2500, 100000, true);
+        Car toyota = new Car("17D-65468", "Toyota", 12500, 6500, true);
+
+        inventory.put(nissan.getRegistration(), nissan);
+        inventory.put(honda.getRegistration(), honda);
+        inventory.put(toyota.getRegistration(), toyota);
+    }
+
+    public HashMap<String, Car> getInventory() {
+        return inventory;
     }
 }
