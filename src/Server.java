@@ -6,6 +6,7 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -35,7 +36,7 @@ class ClientHandler implements Runnable {
         private Socket client;
         private BufferedReader in;
         private PrintWriter out;
-        Inventory inventory = new Inventory();
+        private static Inventory inventory = new Inventory();
 
     public ClientHandler(Socket clientSocket) throws IOException {
         this.client = clientSocket;
@@ -76,12 +77,37 @@ class ClientHandler implements Runnable {
 
     }
 
-    public void sell() {
+    public void sell() throws IOException {
+        while (true) {
+            out.println("Enter Registration");
+            out.print("> ");
+            String givenReg = in.readLine();
 
+            if (inventory.getInventory().containsKey(givenReg) && inventory.getInventory().get(givenReg).isForSale()) {
+                out.println(givenReg + " SOLD!");
+            } else {
+                out.println(givenReg + " Isn't For Sale...");
+            }
+            break;
+        }
     }
 
-    public void carInfo() {
+    public void carInfo() throws IOException {
+           while (true) {
+               out.println("Enter Registration");
+               String givenReg = in.readLine();
 
+               if (inventory.getInventory().containsKey(givenReg)) {
+                   out.println(List.of(inventory.getInventory().get(givenReg).getMake(),
+                           inventory.getInventory().get(givenReg).getRegistration(),
+                           Integer.toString(inventory.getInventory().get(givenReg).getPrice()),
+                           Integer.toString(inventory.getInventory().get(givenReg).getMileage()),
+                           Boolean.toString(inventory.getInventory().get(givenReg).isForSale())));
+
+                   break;
+               }
+               break;
+           }
     }
 }
 
