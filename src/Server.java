@@ -14,7 +14,7 @@ public class Server {
     private static final int PORT = 8080;
 
     private static ArrayList<ClientHandler> clients = new ArrayList<>();
-    private static ExecutorService pool = Executors.newFixedThreadPool(4);
+    private static ExecutorService pool = Executors.newFixedThreadPool(50);
 
     public static void main(String[] args) throws IOException {
         ServerSocket listener = new ServerSocket(PORT);
@@ -116,12 +116,12 @@ class ClientHandler implements Runnable {
                String givenReg = in.readLine();
 
                if (inventory.getInventory().containsKey(givenReg)) {
-                   out.println(List.of(inventory.getInventory().get(givenReg).getMake(),
+                   out.println(List.of(
                            inventory.getInventory().get(givenReg).getRegistration(),
+                           inventory.getInventory().get(givenReg).getMake(),
                            Integer.toString(inventory.getInventory().get(givenReg).getPrice()),
                            Integer.toString(inventory.getInventory().get(givenReg).getMileage()),
                            Boolean.toString(inventory.getInventory().get(givenReg).isForSale())));
-
                    break;
                }
                break;
@@ -192,10 +192,34 @@ class Inventory {
         Car nissan = new Car("12D-32454", "Nissan", 15000, 500, true);
         Car honda = new Car("06D-12547", "Honda", 2500, 100000, true);
         Car toyota = new Car("17D-65468", "Toyota", 12500, 6500, true);
+        Car mitsubishi = new Car("95G-16432", "Mitsubishi", 5000, 65000, true);
+        Car audi = new Car("13D-87943", "Audi", 27750, 11250, false);
+        Car bmw = new Car("16D-16582", "BMW", 38750, 63250, true);
+        Car volkswagen = new Car("17G-15687", "Volkswagen", 30000, 25000, false);
+        Car mercedes = new Car("19L-16886", "Mercedes", 45000, 45000, false);
+        Car seat = new Car("05L-99856", "Seat", 6000, 36750, true);
+        Car ferrari = new Car("94K-21368", "Ferrari", 125000, 0, true);
+        Car bentley = new Car("20C-56166", "Bentley", 75000, 500, true);
+        Car vauxhall = new Car("15G-63355", "Vauxhall", 7500, 18500, false);
+        Car lotus = new Car("11D-78965", "Lotus", 22500, 11000, true);
+        Car ford = new Car("09C-65423", "Ford", 20000, 56188, true);
+        Car chevrolet = new Car("11K-98897", "Chevrolet", 12000, 500, true);
 
         inventory.put(nissan.getRegistration(), nissan);
         inventory.put(honda.getRegistration(), honda);
         inventory.put(toyota.getRegistration(), toyota);
+        inventory.put(mitsubishi.getRegistration(), mitsubishi);
+        inventory.put(audi.getRegistration(), audi);
+        inventory.put(bmw.getRegistration(), bmw);
+        inventory.put(volkswagen.getRegistration(), volkswagen);
+        inventory.put(mercedes.getRegistration(), mercedes);
+        inventory.put(seat.getRegistration(), seat);
+        inventory.put(ferrari.getRegistration(), ferrari);
+        inventory.put(bentley.getRegistration(), bentley);
+        inventory.put(vauxhall.getRegistration(), vauxhall);
+        inventory.put(lotus.getRegistration(), lotus);
+        inventory.put(ford.getRegistration(), ford);
+        inventory.put(chevrolet.getRegistration(), chevrolet);
     }
 
     public HashMap<String, Car> getInventory() {
