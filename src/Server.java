@@ -11,29 +11,65 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Semaphore;
 
-public class Server {
-    private static final int PORT = 8080;
+/*
+The server starts and creates an opening on port 8080
+and waits for a client to connect. Upon connection,
+confirmation is shown then we execute the thread pool.
 
+Clients are handled by a separate class which uses the
+runnable interface. This class receives the input from
+a client then calls the corresponding command.
+
+A car and car inventory class is also housed in this
+file.
+ */
+
+public class Server {
+    /*
+    Port needed to connect, this can be changed if in use
+    on the users machine, but it must be changed on the client
+    side also.
+
+    We also create an array list of clients which manages the
+    threads, we also create a thread pool of size 50.
+     */
+    private static final int PORT = 8080;
     private static ArrayList<ClientHandler> clients = new ArrayList<>();
     private static ExecutorService pool = Executors.newFixedThreadPool(50);
 
     public static void main(String[] args) throws IOException {
-        ServerSocket listener = new ServerSocket(PORT);
+        /*
+        We first create a server socket and pass the port number,
+        we then accept the connection and show confirmation on
+        the server side.
 
+        We then create a client handler object and handle the
+        client and their requests to the server.
+
+        Clients are added to the clients array list then
+        we execute the thread pool.
+         */
+        ServerSocket listener = new ServerSocket(PORT);
         System.out.println("[SERVER] Waiting for connection...");
 
         while (true) {
             Socket client = listener.accept();
             System.out.println("[SERVER] Connected to client");
-            ClientHandler clientThread = new ClientHandler(client);
-            clients.add(clientThread);
 
+            ClientHandler clientThread = new ClientHandler(client);
+
+            clients.add(clientThread);
             pool.execute(clientThread);
         }
     }
 }
 
 class ClientHandler implements Runnable {
+    /*
+    This class handles' client requests to the
+    server and manages the thread access via
+    semaphores.
+     */
     private Socket client;
     private BufferedReader in;
     private PrintWriter out;
@@ -48,6 +84,11 @@ class ClientHandler implements Runnable {
 
     @Override
     public void run() {
+        /*
+        We take the client command and then call
+        the corresponding method.
+         */
+
         try {
             while (true) {
                 String request = in.readLine();
@@ -73,16 +114,26 @@ class ClientHandler implements Runnable {
     }
 
     public void add() throws IOException {
+        /*
+        This method takes input from the user
+        who wants to add a car to the inventory.
+        Data is entered separated by commas, then
+        split into an array, then finally passed
+        into the car objects constructor. Upon
+        creating, the new car is then added
+        to the inventory.
+         */
         String[] details;
 
         while (true) {
             out.println("Enter Car Details");
             String givenDetails = in.readLine();
-
+            // Split by comma and store it in the array
             details = givenDetails.split(",");
             break;
         }
 
+        // Extracting info
         String reg = details[0];
         String make = details[1];
         int price = Integer.parseInt(details[2]);
@@ -90,11 +141,22 @@ class ClientHandler implements Runnable {
         boolean forSale = Boolean.parseBoolean(details[4]);
 
         Car car = new Car(reg, make, price, mileage, forSale);
-
         inventory.getInventory().put(car.getRegistration(), car);
     }
 
     public void sell() throws IOException, InterruptedException {
+        /*
+        To sell a car it first must exist. We check this by
+        taking input from the user who will pass the registration.
+        If the car exists then it is sold and removed from the
+        inventory.
+
+        Only 1 client can sell the same car at a time so here
+        we use a semaphore to manage access.
+
+        Confirmation of a successful or unsuccessful sale
+        is then shown to the user.
+         */
         while (true) {
             out.println("Enter Registration");
             out.print("> ");
@@ -113,25 +175,37 @@ class ClientHandler implements Runnable {
     }
 
     public void carInfo() throws IOException {
-           while (true) {
-               out.println("Enter Registration");
-               String givenReg = in.readLine();
+        /*
+        Similarly to the sell method, we take input
+        from the user which will be the registration
+        as this is the key in the hash map.
 
-               if (inventory.getInventory().containsKey(givenReg)) {
-                   out.println(List.of(
-                           inventory.getInventory().get(givenReg).getRegistration(),
-                           inventory.getInventory().get(givenReg).getMake(),
-                           Integer.toString(inventory.getInventory().get(givenReg).getPrice()),
-                           Integer.toString(inventory.getInventory().get(givenReg).getMileage()),
-                           Boolean.toString(inventory.getInventory().get(givenReg).isForSale())));
-                   break;
-               }
-               break;
-           }
+        We then search the hash map and return the
+        car.
+         */
+        while (true) {
+            out.println("Enter Registration");
+            String givenReg = in.readLine();
+
+            if (inventory.getInventory().containsKey(givenReg)) {
+                out.println(List.of(
+                        inventory.getInventory().get(givenReg).getRegistration(),
+                        inventory.getInventory().get(givenReg).getMake(),
+                        Integer.toString(inventory.getInventory().get(givenReg).getPrice()),
+                        Integer.toString(inventory.getInventory().get(givenReg).getMileage()),
+                        Boolean.toString(inventory.getInventory().get(givenReg).isForSale())));
+                break;
+            }
+            break;
+        }
     }
 }
 
 class Car {
+    /*
+    Standard car object with car details as well
+    as their getter and setter methods.
+     */
     private String registration, make;
     private int price, mileage;
     private boolean forSale;
@@ -186,6 +260,11 @@ class Car {
 }
 
 class Inventory {
+    /*
+    An inventory of cars stored in a hash map.
+    The key is the registration and the value is
+    the car object itself.
+     */
     HashMap<String, Car> inventory;
 
     public Inventory() {
