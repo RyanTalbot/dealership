@@ -4,6 +4,17 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 
+/*
+This class create a client and connects to
+the server, we use the same port number as the
+server, but we also must specify the IP address,
+in this case we use local host.
+
+We then allow the client to pass input which is
+then sent back to the server, the server can then
+act on the command given.
+ */
+
 public class Client {
     private static final String SERVER_IP = "127.0.0.1";
     private static final int SERVER_PORT = 8080;
@@ -15,6 +26,7 @@ public class Client {
         BufferedReader keyboard = new BufferedReader(new InputStreamReader(System.in));
         PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
 
+        // Starting client thread
         new Thread(serverConnection).start();
 
         while (true) {
