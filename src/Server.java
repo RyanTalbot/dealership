@@ -73,8 +73,26 @@ class ClientHandler implements Runnable {
         }
     }
 
-    public void add() {
+    public void add() throws IOException {
+        String[] details;
 
+        while (true) {
+            out.println("Enter Car Details");
+            String givenDetails = in.readLine();
+
+            details = givenDetails.split(",");
+            break;
+        }
+
+        String reg = details[0];
+        String make = details[1];
+        int price = Integer.parseInt(details[2]);
+        int mileage = Integer.parseInt(details[3]);
+        boolean forSale = Boolean.parseBoolean(details[4]);
+
+        Car car = new Car(reg, make, price, mileage, forSale);
+
+        inventory.getInventory().put(car.getRegistration(), car);
     }
 
     public void sell() throws IOException {
