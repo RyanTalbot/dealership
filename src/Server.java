@@ -51,13 +51,10 @@ class ClientHandler implements Runnable {
                 String request = in.readLine();
 
                 if (request.contains("add")) {
-                    out.println("ADD");
                     add();
                 } else if (request.contains("sell")) {
-                    out.println("SELL");
                     sell();
                 } else if (request.contains("info")) {
-                    out.println("INFO");
                     carInfo();
                 }
             }
