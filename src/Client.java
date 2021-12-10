@@ -18,11 +18,12 @@ public class Client {
         new Thread(serverConnection).start();
 
         while (true) {
-            System.out.println("> ");
+            System.out.print("> ");
             String command = keyboard.readLine();
 
             if (command.equalsIgnoreCase("stop")) break;
             out.println(command);
+
         }
         socket.close();
         System.exit(0);
@@ -33,8 +34,8 @@ class ServerConnection implements Runnable {
     private Socket server;
     private BufferedReader in;
 
-    public ServerConnection(Socket server) throws IOException {
-        this.server = server;
+    public ServerConnection(Socket s) throws IOException {
+        this.server = s;
         in = new BufferedReader(new InputStreamReader(server.getInputStream()));
     }
 
@@ -46,7 +47,7 @@ class ServerConnection implements Runnable {
 
                 if (serverResponse == null) break;
 
-                System.out.println("Server says " + serverResponse);
+                System.out.println("[SERVER]: " + serverResponse);
             }
         } catch (IOException e) {
             e.printStackTrace();
