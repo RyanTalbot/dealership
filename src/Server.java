@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.Semaphore;
 
 public class Server {
     private static final int PORT = 8080;
@@ -33,10 +34,11 @@ public class Server {
 }
 
 class ClientHandler implements Runnable {
-        private Socket client;
-        private BufferedReader in;
-        private PrintWriter out;
-        private static Inventory inventory = new Inventory();
+    private Socket client;
+    private BufferedReader in;
+    private PrintWriter out;
+    private static Inventory inventory = new Inventory();
+    private static Semaphore semaphore = new Semaphore(1);
 
     public ClientHandler(Socket clientSocket) throws IOException {
         this.client = clientSocket;
@@ -58,7 +60,7 @@ class ClientHandler implements Runnable {
                     carInfo();
                 }
             }
-        } catch (IOException e) {
+        } catch (IOException | InterruptedException e) {
             e.printStackTrace();
         } finally {
             out.close();
@@ -92,13 +94,16 @@ class ClientHandler implements Runnable {
         inventory.getInventory().put(car.getRegistration(), car);
     }
 
-    public void sell() throws IOException {
+    public void sell() throws IOException, InterruptedException {
         while (true) {
             out.println("Enter Registration");
             out.print("> ");
             String givenReg = in.readLine();
 
             if (inventory.getInventory().containsKey(givenReg) && inventory.getInventory().get(givenReg).isForSale()) {
+                semaphore.acquire();
+                inventory.getInventory().remove(givenReg);
+                semaphore.release();
                 out.println(givenReg + " SOLD!");
             } else {
                 out.println(givenReg + " Isn't For Sale...");
