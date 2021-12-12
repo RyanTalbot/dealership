@@ -22,6 +22,8 @@ a client then calls the corresponding command.
 
 A car and car inventory class is also housed in this
 file.
+
+The server must be started before a client(s) can connect.
  */
 
 public class Server {
@@ -99,6 +101,8 @@ class ClientHandler implements Runnable {
                     sell();
                 } else if (request.contains("info")) {
                     carInfo();
+                } else if (request.contains("commands")) {
+                    showCommands();
                 }
             }
         } catch (IOException | InterruptedException e) {
@@ -198,6 +202,10 @@ class ClientHandler implements Runnable {
             }
             break;
         }
+    }
+
+    public void showCommands() {
+        out.println("Commands-[add, sell, info, commands, stop]");
     }
 }
 
